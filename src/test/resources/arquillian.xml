@@ -1,0 +1,55 @@
+<arquillian xmlns="http://jboss.org/schema/arquillian"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="
+        http://jboss.org/schema/arquillian
+        http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+
+    <extension qualifier="docker">
+        <property name="definitionFormat">CUBE</property>
+        <property name="dockerInsideDockerResolution">true</property>
+        <property name="autoStartContainers">${auto.start.containers:regexp:.*}</property>
+        <property name="dockerContainers">
+          networks:
+            testnetwork*:
+              driver: bridge
+
+          test*:
+            buildImage:
+              dockerfileLocation: .
+              noCache: true
+              remove: true
+            await:
+              strategy: polling
+            portBindings: [1080/tcp]
+            networkMode: testnetwork*
+            restartPolicy:
+              name: failure
+              maximumRetryCount: 1
+            manual: false
+
+          stub*:
+            image: stub-template:1.0-SNAPSHOT
+            await:
+              strategy: polling
+            exposedPorts: [8443/tcp]
+            networkMode: testnetwork*
+            restartPolicy:
+              name: failure
+              maximumRetryCount: 1
+            manual: false
+            aliases:
+              - stub.stub.io
+            dependsOn:
+              - int-test*
+        </property>
+    </extension>
+
+    <!-- This enables the Arquillian JaCoCo Extension -->
+    <extension qualifier="jacoco"/>
+
+    <!-- This enables the Arquillian RestAssured Extension -->
+    <extension qualifier="restassured">
+        <property name="port">1080</property>
+    </extension>
+
+</arquillian>

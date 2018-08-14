@@ -1,0 +1,9 @@
+#version: '2'
+services:
+  api:
+    image: api-template:1.0-SNAPSHOT
+    links:
+      - 'stub:stub.stub.io'
+
+  stub:
+    image: stub-template:1.0-SNAPSHOT
