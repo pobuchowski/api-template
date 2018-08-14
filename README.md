@@ -14,21 +14,24 @@ mvn clean install spring-boot:repackage docker:build
 This project requires the stub-template image from this project
 https://github.com/tim-m-robinson/stub-template
 
+The easiest way to run this sample is using docker-compose
+
 Run container: (docker-compose)
 ```
 docker-compose up
 ```
+If you wish to run the sample using 'raw' docker
+
 Run container: (docker)
 ```
 docker run -d --name stub stub-template:1.0-SNAPSHOT
 docker run -d --name test -p 1080:1080 --link stub:stub.stub.io api-template:1.0-SNAPSHOT
 ```
 ## Query service 
-Since we use a self-signed certificate for this quick start we must use the curl '-k' flag
 
 Query running docker container:
 ```
-curl -k https://localhost:1080/dummy/time
+curl http://localhost:1080/dummy/time
 ```
 
 Expected response:
@@ -38,6 +41,9 @@ Expected response:
 ```
 ## Running test
 There are three types of tests configured in the pom file, integration tests started with `test` profile, unit tests started with `unit-test` profile and a variant of integration tests using the Arquillian Container-Object Model `com-test`
+
+For all types of test we use random ports and container names to avoid conflicts in Continuous Integration environments where many build and test cycles are run in parallel.
+
 ### Unit test
 Unit tests run tests in the JVM without Docker. The unit tests generate JaCoCo code coverage reports. They can be found in the target/site directory after a successful test run
 
